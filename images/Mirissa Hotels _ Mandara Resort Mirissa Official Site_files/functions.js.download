@@ -1,0 +1,806 @@
+/** API Reference 
+    Owl carousel -  http://www.owlcarousel.owlgraphic.com/docs/started-welcome.html
+    Bootstrap - http://getbootstrap.com/javascript/
+    Fancybox - https://fancyapps.com/fancybox/3/docs/
+    SmartMenus - http://www.smartmenus.org/docs/
+
+   */
+/** --------------- DO NOT EDIT BELOW THIS LINE --------------- */
+
+/* deferred video/iframe/img until after the initial pageload  */
+function deferload() {
+    $.each($("iframe , img , source"), function (n, i) {
+        var t = $(this).data('src');
+        $(this).attr("src", t);
+    });
+}
+/* activate hamburger navigation */
+function hamburgerdrop(elemclick, target, animargs) {
+    if (elemclick.length) {
+        $(elemclick).click(function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            /* toggle expanded target */
+            $('.expand').map(function (index) {
+                if ($(this)[0] !== $(target)[0]) {
+                    $(this).toggleClass('expand').stop(true, true).animate(animargs, 300);
+                }
+            });
+            /* toggle open elemclick */
+            $('.open').map(function (index) {
+                if ($(this)[0] !== $(elemclick)[0]) {
+                    $(this).toggleClass('open');
+                }
+            });
+
+            /* toggle hamburger */
+            $(this).toggleClass('open');
+            $(target).toggleClass('expand').stop(true, true).animate(animargs, 300);
+            removeTopNav();
+
+            $('#booking_widget').removeClass('open_wid');
+            $('#book_btn').html('book your stay');
+
+            
+            
+        });
+    }
+    /* not target click handle */
+    $(document).click(function (e) {
+        if ($(target).is(":visible") && $(target).prevUntil('.menu-toggle').is(":visible") && !$(target).is(e.target)) {
+            $(elemclick).toggleClass('open');
+            $(target).toggleClass('expand').stop(true, true).animate(animargs, 300);
+        }
+    });
+    /* stop propagation */
+    $(target).click(function (e) {
+        e.stopPropagation();
+    });
+}
+
+
+/* owls on required devices only */
+function owlsonrequireddevicesonly(elem, breakpoint, args) {
+    if ($(elem)[0]) {
+        var s = $(elem);
+        if (window.innerWidth < breakpoint) {
+            s.owlCarousel(args)
+        } else s.addClass("off");
+        /* destroy owl carousel on resize */
+        $(window).resize(function (e) {
+            if (window.innerWidth < breakpoint) {
+                if ($(elem).hasClass("off")) {
+                    s.owlCarousel(args);
+                    s.removeClass("off")
+                }
+            } else $(elem).hasClass("off") || (s.addClass("off").trigger("destroy.owl.carousel"), s.find(".owl-stage-outer").children(":eq(0)").unwrap())
+        })
+    }
+}
+
+/* synced owl */
+function syncedowl(bigimages, thumbs, bigimagesargs, thumbsargs, popuptype) {
+    /* synced carousel variables */
+    var sync1 = $(bigimages),
+        sync2 = $(thumbs)
+    flag = false,
+        duration = 300;
+    /* parsing args */
+    if (sync1.length) {
+        sync1.owlCarousel(bigimagesargs).on('changed.owl.carousel', function (e) {
+            /* apply sync position on change */
+            syncPosition(e);
+            if (!flag) {
+                flag = true;
+                sync2.trigger('to.owl.carousel', [e.item.index, duration, true]);
+                flag = false;
+            }
+        });
+    }
+    /* parsing args */
+    if (sync2.length) {
+        sync2.owlCarousel(thumbsargs).on('click', '.owl-item', function () {
+                sync1.trigger('to.owl.carousel', [$(this).index(), duration, true]);
+            })
+            .on('changed.owl.carousel', function (e) {
+                if (!flag) {
+                    flag = true;
+                    sync1.trigger('to.owl.carousel', [e.item.index, duration, true]);
+                    flag = false;
+                }
+            });
+        /* add synced class on init */
+        sync2.find(".owl-item").eq(0).addClass('current');
+
+    }
+    /* sync position */
+    function syncPosition(el) {
+        var current = el.item.index;
+        sync2
+            .find(".owl-item").removeClass('current').eq(current).addClass('current');
+    }
+}
+
+/* --------------- DO NOT EDIT ABOVE THIS LINE --------------- */
+
+/* loading different resources for mobile and desktop users */
+
+if (window.matchMedia("(min-width: 1200px)").matches) {
+    /* the view port is at least 1200 pixels wide */
+    $(window).scroll(function (e) {
+        /*hide datpicker on scroll*/
+        $('.response-field-datepicker input , .dp input').datepicker('hide').blur();
+    });
+} else {
+    /* the view port is less than 1200 pixels wide */
+}
+
+/* create your functions here */
+/* ------------------------- executes when complete page is fully loaded ----------------------------- */
+document.addEventListener("click", function(e){
+    removeTopNav();    
+    // closeBookBtn(); 
+
+    $('.vr_overlay').hide();
+
+    setTimeout(function() {
+       $('.vr_overlay').show();
+    }, 8000 );  
+});
+
+
+function removeTopNav(){
+    if ( $( ".main-menu-container" ).is( ".expand" ) ) { 
+        $( ".topmenu" ).addClass('hide_menu');     
+    }else{
+        $( ".topmenu" ).removeClass('hide_menu');     
+    }
+}
+
+
+$(window).load(function (e) {
+     /* datepicker */
+    if ($('.check-dates').length) {
+        $('.check-dates').datepicker({ 
+            format : "dd-mm-yyyy",
+
+        });
+
+    }
+
+    /* if synced carousel available only */
+     b = {
+        items: 1,
+        dots: 1,
+        loop: !1,
+        responsive: {
+            1200: {
+                nav: 1,
+                dots: !1,
+                navText: ['<span class="btn-primary"><span class="btn-name">Prev</span><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#prev_ar"></use> </svg></span>',
+                '<span class="btn-primary"><span class="btn-name">Next</span><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#next_ar"></use> </svg></span>']
+            }
+        }
+    }
+
+    t = {
+        items: 1,
+        dots: 0,
+        nav: 0,
+        margin: 0,
+        loop: !1,
+        responsive: {
+            768: {
+                items: 2
+            },
+            1200: {
+                items: 3
+            }
+        }
+    }
+
+
+    /** @param
+        0 - elem id / elem class - big images
+        1 - elem id / elem class - thumb images
+        2 - big images carousel args
+        3 - thumbs carousel args
+        4 - magnificpopup type ex: image/iframe
+        */
+ // var sync1 = $("#attraction_slider");
+ //  var sync2 = $("#attraction_titles");
+    syncedowl("#attraction_slider", "#attraction_titles", b, t, "image");
+
+    /* smart menu */
+    if ($('#main-menu').length) {
+        $("#main-menu").smartmenus().bind("click.smapi", function (e, t) {
+            var n = $(this).data("smartmenus");
+            if (n.isCollapsible()) {
+                var i = $(t);
+                o = i.dataSM("sub");
+                if (o && !o.is(":visible")) return n.itemActivate(i, !0), !1
+            }
+        });
+    }
+    /* hamburger menu toggle */
+    if ($('.menu-toggle').length) {
+        $('.menu-toggle').click(function () {
+            $(this).toggleClass('open');
+        });
+    }
+
+    /* create var */
+    var html = "";
+    var video = "";
+    var vids = [];
+    var player = [];
+    var description = "";
+    var linkurl = "";
+    var target = "";
+    var vrframe = "";
+    /* ---------- array check & create html slides - responsive ---------- */
+    if (typeof imageArray != 'undefined') {
+        for (var i = 1; i < imageArray.length; i++) {
+            /* check for the video url and include it in the slider */
+            if (imageArray[i]['videourl'] != '') {
+                /* loading video above 1200px */
+                if (window.matchMedia("(min-width: 1199px)").matches) {
+                    video = '<video data-id="' + i + '" id="videoid_' + i + '" class="video-js" controls muted crossorigin autoplay>' +
+                        '<source src="' + imageArray[i]['videourl'] + '" type="' + imageArray[i]['videotype'] + '">' +
+                        '</video>';
+
+                    /*collect video id's in to an array */
+                    vids[i] = "videoid_" + i;
+                }
+
+            }
+            /* check for the link  */
+            if (imageArray[i]['vrframe'] != '') {
+                // vrframe = '<a href="' + imageArray[i]['linkurl'] + '" class="linkurl clearfix" target="' + imageArray[i]['target'] + '">' + imageArray[i]['linktext'] + '</a>';
+                vrframe = '<div class="vr_overlay"></div><iframe src="'+ imageArray[i]['vrframe']+'" class="ifarme_block"></iframe>';
+            }
+
+            /* check for the title & description */
+            if ( imageArray[i]['displaytext'] != '' && imageArray[i]['linktext'] != '' ) {
+                
+                description = `<div class="slider-texts">
+                                    <div class="slider-text-inner">
+                                        <h3>`+imageArray[i]['displaytext']+`</h3>
+                                        <h2>`+imageArray[i]['linktext']+`</h2>
+                                    </div>
+                                </div>`;
+            }
+
+            html += '<div class="item">' + video +
+                '<picture>' +
+                '<source media="(max-width: 768px)" srcset="' + imageArray[i]['mobileimgurl'] + '">' +
+                '<img class="img-responsive" src="' + imageArray[i]['desktopimgurl'] + '" alt="' + imageArray[i]['alt'] + '" title="' + imageArray[i]['title'] + '">' +
+                '</picture>' + description +
+                '</div>';
+
+            /* unset var */
+            video = '';
+            description = '';
+            linkurl = '';
+            target = '';
+            vrframe = '';
+        }
+    }
+
+    /* ---------- array check & create html slides for fullscreen ---------- */
+    if (typeof imageArrayfullscreen != 'undefined') {
+        for (var i = 1; i < imageArrayfullscreen.length; i++) {
+            /* check for the video url and include it in the slider */
+            if (imageArrayfullscreen[i]['videourl'] != '') {
+                /* loading video above 1200px */
+                if (window.matchMedia("(min-width: 1199px)").matches) {
+                    video = '<video data-id="' + i + '" id="videoid_' + i + '" class="video-js" controls muted crossorigin autoplay>' +
+                        '<source src="' + imageArrayfullscreen[i]['videourl'] + '" type="' + imageArrayfullscreen[i]['videotype'] + '">' +
+                        '</video>';
+
+                    /*collect video id's in to an array */
+                    vids[i] = "videoid_" + i;
+                }
+            }
+            /* check for the link  */
+
+             /* check for the link  */
+            if (imageArrayfullscreen[i]['vrframe'] != '') {
+                // vrframe = '<a href="' + imageArrayfullscreen[i]['linkurl'] + '" class="linkurl clearfix" target="' + imageArrayfullscreen[i]['target'] + '">' + imageArrayfullscreen[i]['linktext'] + '</a>';
+                vrframe = '<div class="vr_overlay"></div><iframe src="'+ imageArrayfullscreen[i]['vrframe']+'" class="ifarme_block"></iframe>';
+            }
+
+            if ( imageArrayfullscreen[i]['displaytext'] != '' && imageArrayfullscreen[i]['linktext'] != '' ) {
+                            
+                description = `<div class="slider-texts">
+                                    <div class="slider-text-inner">
+                                        <h3>`+imageArrayfullscreen[i]['displaytext']+`</h3>
+                                        <h2>`+imageArrayfullscreen[i]['linktext']+`</h2>
+                                    </div>
+                                </div>`;
+            }
+
+            html += '<div class="item" style="background-image: url(' + imageArrayfullscreen[i]['desktopimgurl'] + ')">' + video + vrframe +
+                '<img class="img-responsive" src="' + imageArrayfullscreen[i]['mobileimgurl'] + '" alt="' + imageArrayfullscreen[i]['alt'] + '" title="' + imageArrayfullscreen[i]['title'] + '">' + description +
+                '</div>';
+
+            /* unset var */
+            video = '';
+            description = '';
+            linkurl = '';
+            target = '';
+            vrframe = '';
+        }
+    }
+
+    /* carousel args */
+
+    args = {
+        items: 1,
+        dots: !1,
+        autoplay: false,
+        animateOut: "fadeOut",
+        onChanged: function (event) {
+            /* init videojs */
+            if (vids.length) {
+                $.each(vids, function (key, value) {
+                    if (value) {
+                        player[key] = videojs(value);
+                    }
+
+                });
+            }
+
+            /* loading different resources for mobile and desktop users */
+            if (window.matchMedia("(max-width: 1200px)").matches) {
+                /* stop all playing videos*/
+                $("#eme-slider video").each(function () {
+                    $(this).get(0).pause();
+                });
+                /* trigger autoplay */
+                $(event.target).trigger('stop.owl.autoplay');
+
+            } else {
+
+                var Obj = $(event.target).find(".owl-item").eq(event.item.index).has('video');
+                /*check for the video*/
+                if (Obj.length) {
+                    /*stop owl if video */
+                    $(event.target).trigger('stop.owl.autoplay');
+
+                    /* stop all playing videos*/
+                    $("#eme-slider video").each(function () {
+                        $(this).get(0).pause();
+                    });
+
+                    /*play video*/
+                    var objectid = Obj.find('video').data('id');
+                    player[objectid].play().on('ended', function () {
+                        /* trigger autoplay */
+                        $(event.target).trigger('stop.owl.autoplay');
+                    });
+                } else {
+                    /* trigger autoplay */
+                    $(event.target).trigger('stop.owl.autoplay');
+                }
+                Obj = '';
+            }
+        }
+    }
+    /* init slider */
+    if ($('#eme-slider').length) {
+        /* apply carousel only if slider items > 1 */
+        if (typeof imageArraycount != 'undefined') {
+            if (imageArraycount != 1) {
+                $('#eme-slider').append(html).owlCarousel(args);
+            }
+        }
+
+    }
+    /* defer loading */
+    deferload();
+
+
+    /****================================= Home offers  =========================================****/
+    var homeOffersSlider = {
+        dots: 1,
+        autoplay: !1,
+        margin: 0,
+        loop: 0,
+        items: 1,
+        center: 1,
+        animateOut: "fadeOut",
+        autoplayHoverPause: !0,
+        // dotsContainer: '#home-exclusive-custom-dots',
+        navText: ['<span class="btn-primary"><span class="btn-name">Prev</span><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#prev_ar"></use> </svg></span>',
+    '<span class="btn-primary"><span class="btn-name">Next</span><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#next_ar"></use> </svg></span>'
+        ],
+        nav: 0,
+        responsive: {
+            1200: {
+                dots: !1,
+                nav: 1
+
+            }
+        }
+    };
+
+    var homeExclusiveSlider = $('#offers-slider');
+    if (homeExclusiveSlider.length) {
+        homeExclusiveSlider.owlCarousel(homeOffersSlider);
+    } 
+
+// room inner slider
+    var roomInnerSlider = {
+        dots: 1,
+        autoplay: !1,
+        margin: 0,
+        loop: 0,
+        items: 1,
+        center: 1,
+        animateOut: "fadeOut",
+        autoplayHoverPause: !0,
+        // dotsContainer: '#home-exclusive-custom-dots',
+        navText: ['<span class="btn-primary"><span class="btn-name">Prev</span><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#prev_ar"></use> </svg></span>',
+    '<span class="btn-primary"><span class="btn-name">Next</span><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#next_ar"></use> </svg></span>'],
+        nav: 0,
+        responsive: {
+            992: {
+                dots: 1,
+                nav: 1
+
+            }
+        }
+    };
+
+    var roomPageInnerSlider = $('#room_images');
+    if (roomPageInnerSlider.length) {
+        roomPageInnerSlider.owlCarousel(roomInnerSlider);
+    }
+
+
+
+    /*Home news and events*/
+    var homeNewsandEvents = {
+        dots: 1,
+        autoplay: !1,
+        margin: 0,
+        loop: 0,
+        items: 1,
+        center: !1,
+        animateOut: "fadeOut",
+        autoplayHoverPause: !0,
+        // dotsContainer: '#home-exclusive-custom-dots',
+        navText: ['<span class="btn-primary"><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-left"></use> </svg></span>',
+            '<span class="btn-primary"><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use></svg></span>'
+        ],
+        nav: 0,
+        responsive: {
+            992: {
+                items: 2,
+                dots: !1,
+                nav: 1,
+                margin: 0,
+            },
+            1200: {
+                margin: 30,
+                items: 2,
+                dots: !1,
+                nav: 1
+            }
+        }
+    };
+
+    var homeNewsEvents = $('#news-events');
+    if (homeNewsEvents.length) {
+        homeNewsEvents.owlCarousel(homeNewsandEvents);
+    }
+
+    /*Home news and events*/
+    var reviewsSliderArgs = {
+        dots: 1,
+        autoplay: !1,
+        margin: 0,
+        loop: 0,
+        items: 1,
+        center: !1,
+        animateOut: "fadeOut",
+        autoplayHoverPause: !0,
+        // dotsContainer: '#home-exclusive-custom-dots',
+        navText: ['<span class="btn-primary"><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#prev_arrow"></use> </svg></span>',
+            '<span class="btn-primary"><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#next_arrow"></use></svg></span>'
+        ],
+        nav: 0,
+        responsive: {
+            0: {
+                items: 1,
+                dots: 1,
+                nav: !1,
+                margin: 0,
+            },
+            1200: {
+                margin: 0,
+                items: 1,
+                dots: !1,
+                nav: 1
+            }
+        }
+    };
+
+    var reviewSlider = $('#reviews_slider');
+    if (reviewSlider.length) {
+        reviewSlider.owlCarousel(reviewsSliderArgs);
+    }
+
+
+    /*logo-slider footer*/
+    var logoliderFooter = {
+        dots: 1,
+        autoplay: !1,
+        margin: 0,
+        loop: 0,
+        items: 1,
+        center: !1,
+        animateOut: "fadeOut",
+        autoplayHoverPause: !0,
+        // dotsContainer: '#home-exclusive-custom-dots',
+        navText: ['<span class="btn-primary"><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-left"></use> </svg></span>',
+            '<span class="btn-primary"><svg width="22" height="8" aria-hidden="true" class="icon-arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#arrow-right"></use></svg></span>'
+        ],
+        nav: 0,
+        responsive: {
+            320: {
+                items: 2,
+                dots: 1,
+                nav: !1,
+            },
+            768: {
+                items: 5,
+                dots: 1,
+                nav: !1
+            },
+            992: {
+                items: 5,
+                dots: !1,
+                nav: !1
+            },
+            1200: {
+                items: 6,
+                dots: !1,
+                nav: !1
+            }
+        }
+    };
+
+    var logoSlideID = $('#logo-slider');
+    if (logoSlideID.length) {
+        logoSlideID.owlCarousel(logoliderFooter);
+    }
+
+
+
+});
+
+/* ------------------------- executes when page scroll ----------------------------- */
+
+$(window).scroll(function (e) {
+
+});
+
+/* ------------------------- executes when page resized ----------------------------- */
+
+$(window).resize(function (e) {});
+
+/* ------------------- executes when the html document is loaded and the dom is ready ---------------- */
+
+$(document).ready(function (e) {
+
+    /* Weather widget */
+    if ($('#weather').length) {
+        if (typeof weatherAPI != 'undefined') {
+            $.simpleWeather(weatherAPI);
+        }
+    }
+
+    /* Clock widget */
+    if ($('#clock').length) {
+        if (typeof clockargs != 'undefined') {
+            $('#clock').jClocksGMT(clockargs);
+        }
+    }
+
+    /* animation args */
+    animargs = {
+        right: "toggle",
+        opacity: "toggle"
+    }
+    /* main navigation */
+    hamburgerdrop('.mainmenutoggle', '.main-menu-container', animargs);
+    // hamburgerdrop('#book_btn', '#booking_widget', animargs);
+    // sidebar
+    hamburgerdrop('#side_bar', '#left-navbar', animargs);
+    /* left navigation */
+    // hamburgerdrop('.shareparent .menu-toggle , .leftnav-title #side_bar', '#left-navbar', animargs);
+
+    /* fancybox 3 */
+    if ($('[data-fancybox]').length) {
+        $('[data-fancybox]').fancybox();
+    }
+
+    /* owls on required devices only */
+    /*(landscape phones, less than 768px)*/
+    var breakpoint = 992;
+    e = {
+        loop: !1,
+        margin: 15,
+        responsive: {
+            0: {
+                items: 1
+            }
+        }
+    }
+    /** @param
+    0 - elem id / elem class
+    1 - breakpoint where you want carousel
+    2 - carousel args
+    */
+    owlsonrequireddevicesonly("#heightlight_cal", breakpoint, e);
+
+});
+
+
+
+$( function(){
+    var emailField = $('#param_email');
+    $('#newsletter_frm').submit( function( e ){
+        e.preventDefault();
+        var errors      = false;
+        var values      = emailField.val();
+        var charLength  = values.length;
+                // validate is it a valid email or its have an empty
+                if ( values == '' ){
+                    showErrorMsg( true , 'Please make sure to enter a email address');
+                }
+                // validate email address if character level is grater than 5
+                if ( charLength > 5 ){
+                    var validEmail =  validateEmail(values);
+                    if ( validEmail == false ){
+                        showErrorMsg( true , 'This email address is not valid! or Complete');
+                    }
+                }
+            });
+
+    function validateEmail(emailField){
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        var email = emailField;
+        if (email == '') {
+            showErrorMsg( true , 'Please make sure to enter a email address');
+            return false;
+        } else if (reg.test(email) == false) {
+            showErrorMsg( true , 'Please enter a valid email address');
+            return false;
+        } else {
+            data = {
+                action: 'validate_newsletter',
+                value: email
+            };
+            $.post( ajaxurl, data, function(response) {
+                if (response) {
+                    if (response == 1 ) {
+                        showErrorMsg( true , 'Email Address is already subscribed');
+                        return false;
+                    } else {
+                        showErrorMsg( false , '');
+                        return true;
+                    }
+                } else {
+                    showErrorMsg( true , 'Try again latter');
+                }
+            });
+        }
+    }
+
+    function showErrorMsg( status, msg ){
+        var status  = status;
+        var msg     = msg;
+        if ( status == true ){
+            $('.error-msg').text( msg );
+            $('.error-msg').addClass('show');
+            setTimeout(function(){ 
+                $('.error-msg').text('');
+                $('.error-msg').removeClass('show')
+            }, 4000);   
+        }else{
+            $('.error-msg').text(''); 
+            document.getElementById("newsletter_frm").submit();
+        }
+
+    }
+
+});
+
+$(document).ready(function($) {
+    $('#book_btn').click(function(e){
+        e.preventDefault();
+        $('#booking_widget').toggleClass('open_wid');
+
+        var x = document.getElementById("book_btn");
+        if (x.innerHTML === "book your stay") {
+            x.innerHTML = "Close";
+        } else {
+            x.innerHTML = "book your stay";
+        }
+    });
+});
+
+function loadDatepickersIbe(){
+    var nowTemp = new Date();
+    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+    
+    $('#param_ibe_checkin').val('');
+    $('#param_ibe_checkout').val('');
+
+    var checkin = $("#param_ibe_checkin").datepicker({
+        format : "dd-mm-yyyy",
+        startDate : "d",
+        orientation: "auto",
+        autoclose: true,
+        todayHighlight: true
+    }).on("changeDate", function(ev) {
+        var minDate = new Date(ev.date.valueOf());
+        minDate.setDate(minDate.getDate()+1);
+        $("#param_ibe_checkout").datepicker('setStartDate', minDate);
+        $("#param_ibe_nights").val( pad('1') );
+        $("#param_ibe_checkout")[0].focus();
+    }).data("datepicker");
+    
+    
+    var checkout = $("#param_ibe_checkout").datepicker({
+        format : "dd-mm-yyyy",
+        startDate : "+1d",
+        orientation: "auto"
+        //onRender: function(date) {
+        //    return date.valueOf() < checkin.date.valueOf() ? "disabled" : "";
+        //}
+    }).on("changeDate", function(ev) {
+        var ciDate            = $("#param_ibe_checkin").val();
+        var coDate          = ev.date;
+        
+        var nigts = daydiff(parseDate( ciDate ), coDate);
+        
+        $("#param_ibe_nights").val( pad(nigts) );
+        
+        checkout.hide();
+    }).data("datepicker");
+    
+    $("#param_ibe_nights").keyup(function() {
+        var nights = $(this).val();
+        if (nights == 0) {
+            nights = 1;
+            $("#param_ibe_nights").mouseout(function() {
+                var nights;
+                if ($("#param_ibe_nights").val() > 1) {
+                    nights = pad($("#param_ibe_nights").val())
+                } else {
+                    nights = "01"
+                }
+                $("#param_ibe_nights").val(nights)
+            })
+        }
+        
+        if (nights != "") {
+            var ciDate            = $("#param_ibe_checkin").val();
+            var coDate          = $("#param_ibe_checkout").val();
+            
+            if( ciDate!='' ){
+               
+                var newDate = parseDate(ciDate);
+                newDate.setDate(newDate.getDate() + parseInt(nights) );
+                checkout.setValue(newDate);
+                
+            }
+            checkin.hide();
+        }
+    });
+}

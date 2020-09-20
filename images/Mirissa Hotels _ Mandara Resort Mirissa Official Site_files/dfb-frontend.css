@@ -1,0 +1,154 @@
+.input-line {
+  clear: both;
+  margin-bottom: 10px;
+}
+.input-line .above-line {
+  margin-top: 7px;
+}
+.input-line > span {
+  display: inline-block;
+  vertical-align: top;
+}
+.input-line > span input {
+  width: 100%;
+}
+.input-line > span > label {
+  display: block;
+  font-size: 13px;
+  margin-left: 3px;
+}
+.response-field-date .month,
+.response-field-date .day,
+.response-field-date .year {
+  width: 50px;
+}
+.response-field-time .hours,
+.response-field-time .minutes,
+.response-field-time .seconds {
+  width: 50px;
+}
+input[type="text"],
+textarea,
+select,
+input[type="email"] {
+  border-radius: 0 !important;
+  /*border: 1px solid #cccccc;*/
+}
+.response-field-number input[type="text"] {
+  width: 80%;
+  float: left;
+}
+.response-field-number span {
+  width: 20%;
+  height: 34px;
+  line-height: 30px;
+  float: left;
+  padding-left: 10px;
+}
+.hasDatepicker {
+  cursor: pointer;
+}
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  background: red;
+  cursor: inherit;
+  display: block;
+}
+input[readonly] {
+  background-color: white;
+  cursor: text;
+}
+.dfm-upload {
+  vertical-align: bottom;
+}
+.response-field-upload .btn {
+  border-radius: 0;
+}
+.response-field-upload small.help-block {
+  float: none;
+}
+.response-field-captcha {
+  margin-top: 20px;
+}
+.response-field-captcha small.help-block {
+  width: 100%;
+  height: auto;
+  float: left;
+  display: none;
+  color: #a94442;
+}
+/*Boostrap Validator*/
+/*.bv-form .help-block {
+margin-bottom: 0;
+}
+.bv-form .tooltip-inner {
+text-align: left;
+}
+.nav-tabs li.bv-tab-success > a {
+color: #3c763d;
+}
+.nav-tabs li.bv-tab-error > a {
+color: #a94442;
+}
+
+.bv-form .bv-icon-no-label {
+top: 0;
+}
+
+.bv-form .bv-icon-input-group {
+font-size: 20px;
+font-weight: normal;
+z-index: 100;
+}*/
+.form-control-feedback {
+  line-height: 34px;
+  top: 0;
+  display: none !important;
+}
+.dfb-form-group {
+  margin-bottom: 0;
+  min-height: 85px;
+}
+.has-feedback .form-control {
+  padding-right: 15px;
+}
+.has-success .form-control,
+.has-success .form-control:focus {
+  border-color: #cccccc !important;
+}
+.has-success .input-group-addon {
+  border-color: #cccccc !important;
+  background-color: #eeeeee;
+  color: #555555;
+}
+.dfb-form small {
+  margin: 5px 0;
+}
+.dfb-form select.form-control {
+  cursor: pointer;
+}
+.response-field-datepicker input[type=text] {
+  cursor: pointer !important;
+}
+.fb-submit-row {
+  margin: 15px 0;
+}
+.msg-status-row {
+  margin-top: 15px;
+}
+.msg-status-row .alert {
+  margin-bottom: 0;
+  display: none;
+}
